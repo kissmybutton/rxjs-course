@@ -1,11 +1,6 @@
 import "./styles.css";
 import { Observable } from "rxjs";
 
-document.getElementById("app").innerHTML = `
-<h1>Hello RxJS!</h1>
-<div style="margin-top: 150px" id="results"></div>
-`;
-
 let appendToResults = (result, id = 'results') => {
   const resultsContainer = document.getElementById(id);
   const span = document.createElement("span");
