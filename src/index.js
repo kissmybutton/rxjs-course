@@ -1,14 +1,6 @@
 import "./styles.css";
-import { of, interval, merge } from "rxjs";
-import {
-  map,
-  filter,
-  tap,
-  catchError,
-  takeUntil,
-  take,
-  mergeMap
-} from "rxjs/operators";
+import { Subject, ReplaySubject, BehaviorSubject, AsyncSubject } from "rxjs";
+import { map } from "rxjs/operators";
 
 let appendToResults = (result, id = "results") => {
   const resultsContainer = document.getElementById(id);
@@ -20,70 +12,34 @@ let appendToResults = (result, id = "results") => {
   resultsContainer.append(br);
 };
 
-// Map
-of(1, 2, 3)
-  .pipe(map((x) => x * x))
-  .subscribe((v) => appendToResults(`value: ${v}`, "results-container-map"));
+const subject = new Subject();
+// const subject = new BehaviorSubject(10); // Initial value
+// const subject = new ReplaySubject(); // History subscription
+// const subject = new AsyncSubject();
 
-// Filter
-of(1, 2, 3, 4, 5, 6, 7)
-  .pipe(filter((x) => x % 2 === 0))
-  .subscribe((v) => appendToResults(`value: ${v}`, "results-container-filter"));
+const observerA = {
+  next: (v) => appendToResults(`observerA: ${v}`, "results-container")
+};
 
-// Map + Filter
-of(0, 1, 2, 3, 4, 5, 6, 7)
-  .pipe(
-    map((x) => x + 1),
-    filter((x) => x % 2 === 0)
-    // take(2),
-  )
-  .subscribe((v) => appendToResults(`value: ${v}`, "results-container-combo"));
+const observerB = {
+  next: (v) => appendToResults(`observerB: ${v}`, "results-container")
+};
 
-// Error
-interval(1000)
-  .pipe(
-    map((x) => {
-      if (x > 0 && x % 5 === 0) {
-        return new Error(`Error mapping value ${x}`);
-      }
-      return x;
-    }),
-    catchError((err) => {
-      appendToResults(`Catch error worked`, "results-container-error");
-      return of(`observable derived from error ${err}`);
-    })
-  )
-  .subscribe(
-    (v) => appendToResults(`subcriber: ${v}`, "results-container-error"),
-    (err) => appendToResults(`error: ${err}`, "results-container-error")
-  );
+subject.subscribe(observerA);
+// subject.next(1);
+// subject.next(2);
+// subject.next(3);
 
-// Merge
-const observable1 = interval(1000).pipe(
-  take(7),
-  map(() => "Observable 1")
-);
-const observable2 = interval(3000).pipe(
-  take(2),
-  map(() => "Observable 2")
-);
-merge(observable1, observable2)
-  .pipe(map((x) => x + " emited"))
-  .subscribe((v) =>
-    appendToResults(`subcriber: ${v}`, "results-container-merge")
-  );
+subject.pipe(map((x) => x + 10)).subscribe(observerB);
+subject.next(1);
+subject.next(2);
+subject.next(3);
 
-// MergeMap
-const letters = of("a", "b", "c");
-const result = letters.pipe(
-  mergeMap((x) => {
-    appendToResults(`${x} emitted`, "results-container-mergemap");
-    return interval(1000).pipe(
-      take(5),
-      map((i) => x + i)
-    );
-  })
-);
-result.subscribe((x) =>
-  appendToResults(`${x} emitted`, "results-container-mergemap")
-);
+setTimeout(() => {
+  subject.next(4);
+}, 7000);
+
+// Async
+// setTimeout(() => {
+//   subject.complete();
+// }, 6000);
