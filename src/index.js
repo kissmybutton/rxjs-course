@@ -1,0 +1,43 @@
+import "./styles.css";
+import { Observable } from "rxjs";
+
+document.getElementById("app").innerHTML = `
+<h1>Hello RxJS!</h1>
+<div style="margin-top: 150px" id="results"></div>
+`;
+
+let appendToResults = (result) => {
+  const resultsContainer = document.getElementById("results");
+  resultsContainer.append(result);
+  var br = document.createElement("br");
+  resultsContainer.append(br);
+};
+
+// Observable
+const observable = new Observable((subscriber) => {
+  subscriber.next(1);
+  subscriber.next(2);
+  subscriber.next(3);
+  setTimeout(() => {
+    subscriber.next(4);
+    subscriber.complete();
+    subscriber.next(5); // Is not delivered because it would violate the contract
+  }, 1000);
+});
+appendToResults("just before subscribe");
+
+// Observer
+const observer = {
+  next(x) {
+    appendToResults("next " + x);
+  },
+  error(err) {
+    appendToResults("error " + err);
+  },
+  complete() {
+    appendToResults("complete");
+  }
+};
+observable.subscribe(observer);
+
+appendToResults("just after subscribe");
