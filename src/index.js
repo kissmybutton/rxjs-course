@@ -6,10 +6,13 @@ document.getElementById("app").innerHTML = `
 <div style="margin-top: 150px" id="results"></div>
 `;
 
-let appendToResults = (result) => {
-  const resultsContainer = document.getElementById("results");
-  resultsContainer.append(result);
-  var br = document.createElement("br");
+let appendToResults = (result, id = 'results') => {
+  const resultsContainer = document.getElementById(id);
+  const span = document.createElement("span");
+  span.innerHTML = result;
+  span.classList = ['result']
+  resultsContainer.append(span);
+  const br = document.createElement("br");
   resultsContainer.append(br);
 };
 
