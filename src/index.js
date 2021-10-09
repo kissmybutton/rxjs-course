@@ -4,7 +4,12 @@ import { debounceTime } from "rxjs/operators";
 
 let appendToResults = (result) => {
   const resultsContainer = document.getElementById("results");
-  resultsContainer.append(result);
+  const span = document.createElement("span");
+  span.innerHTML = result;
+  span.classList = ['result']
+  resultsContainer.append(span);
+  const br = document.createElement("br");
+  resultsContainer.append(br);
 };
 const button = document.getElementById("hit-me");
 
