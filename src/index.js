@@ -2,12 +2,6 @@ import "./styles.css";
 import { fromEvent } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 
-document.getElementById("app").innerHTML = `
-<h1>Hello RxJS!</h1>
-<button style="margin-left: 10px;" id="hit-me"><span class="etmkug-16 ctwFJG">Hit me</span></button>
-<div style="margin-top: 150px" id="results"></div>
-`;
-
 let appendToResults = (result) => {
   const resultsContainer = document.getElementById("results");
   resultsContainer.append(result);
