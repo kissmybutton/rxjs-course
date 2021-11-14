@@ -19,25 +19,30 @@ const appendToResultsFn = appendToResults.bind(
   "vanilla-results"
 );
 
-// Vanilla JS event listener
+// 1 Plain JS way to do async operations
+// Vanilla JS event listener ADD
 button.addEventListener("click", appendToResultsFn);
+// Vanilla JS event listener REMOVE
 setTimeout(() => {
-  // button.removeEventListener("click", appendToResultsFn);
-}, 3000);
+  appendToResults("Removed Listener", "vanilla-results");
+  button.removeEventListener("click", appendToResultsFn);
+}, 5000);
 
-// RxJS event listener
-const subscription1 = fromEvent(button, "click").subscribe(() =>
-  appendToResults("RxJS", "rxjs-results")
-);
+// 2 Basic RxJS for async operations
+// RxJS event listener ADD
+// const subscription1 = fromEvent(button, "click").subscribe(() =>
+//   appendToResults("RxJS", "rxjs-results")
+// );
+// RxJS event listener REMOVE
+// clean up with unsubscribe
+// setTimeout(() => {
+//   appendToResults("Unsubscribed", "rxjs-results");
+//   subscription1.unsubscribe();
+// }, 5000);
 
-setTimeout(() => {
-  // clean up with unsubscribe
-  // subscription1.unsubscribe();
-}, 3000);
-
-// RxJS event listener with operators
-fromEvent(button, "click")
-  .pipe(debounceTime(1000))
-  .subscribe(() => {
-    appendToResults("RxJS with delay", "rxjs-delay-results");
-  });
+// 3 RxJS for async operations with operators
+// fromEvent(button, "click")
+//   .pipe(debounceTime(1000))
+//   .subscribe(() => {
+//     appendToResults("RxJS with delay", "rxjs-delay-results");
+//   });
