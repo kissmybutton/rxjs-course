@@ -1,5 +1,5 @@
 import "./styles.css";
-import { of, interval, merge, throwError } from "rxjs";
+import { of, interval, merge, throwError, Subject, timer } from "rxjs";
 import {
   map,
   filter,
@@ -77,32 +77,35 @@ throwError(1)
 //     () => appendToResults(`complete`, "results-container-error")
 //   );
 
-// // Merge
+// Merge
+// const destroy$ = timer(7000);
 // const observable1 = interval(1000).pipe(
 //   take(7),
 //   map(() => "Observable 1")
 // );
 // const observable2 = interval(3000).pipe(
-//   take(2),
+//   takeUntil(destroy$),
 //   map(() => "Observable 2")
 // );
 // merge(observable1, observable2)
 //   .pipe(map((x) => x + " emited"))
-//   .subscribe((v) =>
-//     appendToResults(`next: ${v}`, "results-container-merge")
-//   );
+//   .subscribe((v) => appendToResults(`next: ${v}`, "results-container-merge"));
 
-// // MergeMap
-// const letters = of("a", "b", "c");
-// const result = letters.pipe(
-//   mergeMap((x) => {
-//     appendToResults(`${x} emitted`, "results-container-mergemap");
-//     return interval(1000).pipe(
-//       take(5),
-//       map((i) => x + i)
-//     );
-//   })
-// );
-// result.subscribe((x) =>
-//   appendToResults(`${x} emitted`, "results-container-mergemap")
-// );
+// MergeMap
+const letters = ["a", "b", "c"];
+const lettersInterval$ = interval(2000).pipe(
+  map((i) => letters[i]),
+  take(3)
+);
+const result = lettersInterval$.pipe(
+  mergeMap((x) => {
+    appendToResults(`api call with "${x}"`, "results-container-mergemap");
+    return interval(1000).pipe(
+      take(1),
+      map((i) => `api response "${x + i}"`)
+    );
+  })
+);
+result.subscribe((x) =>
+  appendToResults(`next: ${x}`, "results-container-mergemap")
+);
